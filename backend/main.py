@@ -9,6 +9,9 @@ import models
 import schemas
 import crud
 from database import SessionLocal, engine
+from sqladmin import Admin, ModelView
+from admin import (InstitutionAdmin, EducatorAdmin, LectureAdmin, 
+                  QuestionAdmin, AnswerOptionAdmin, StudentAnswerAdmin)
 
 # Load environment variables
 load_dotenv()
@@ -35,6 +38,17 @@ app = FastAPI(
     description="API for managing educational data including institutions, educators, lectures, questions, and student answers",
     version="1.0.0"
 )
+
+# Set up admin interface
+admin = Admin(app, engine)
+
+# Add model views to admin
+admin.add_view(InstitutionAdmin)
+admin.add_view(EducatorAdmin)
+admin.add_view(LectureAdmin)
+admin.add_view(QuestionAdmin)
+admin.add_view(AnswerOptionAdmin)
+admin.add_view(StudentAnswerAdmin)
 
 @app.get("/")
 async def root():

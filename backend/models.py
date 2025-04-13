@@ -14,7 +14,7 @@ class Institution(Base):
 
     # Relationships
     educators = relationship("Educator", secondary="educator_institution", back_populates="institutions")
-    lectures = relationship("Lecture", back_populates="institution")
+    lectures = relationship("Lecture", back_populates="institution", foreign_keys="[Lecture.institution_id]")
 
 class Educator(Base):
     __tablename__ = "educator"
@@ -33,8 +33,8 @@ class Educator(Base):
 educator_institution = Table(
     "educator_institution",
     Base.metadata,
-    Column("educator_id", Integer, ForeignKey("educator.id"), primary_key=True),
-    Column("institution_id", Integer, ForeignKey("institution.id"), primary_key=True),
+    Column("educator_id", Integer, ForeignKey("educator.id", ondelete="CASCADE"), primary_key=True),
+    Column("institution_id", Integer, ForeignKey("institution.id", ondelete="CASCADE"), primary_key=True),
     Column("created_at", DateTime, default=datetime.utcnow),
     Column("changed_at", DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 )
@@ -47,12 +47,12 @@ class Lecture(Base):
     changed_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     lecture_date = Column(DateTime, nullable=False)
     lecture_title = Column(String(255), nullable=False)
-    educator_id = Column(Integer, ForeignKey("educator.id"))
-    institution_id = Column(Integer, nullable=False)
+    educator_id = Column(Integer, ForeignKey("educator.id", ondelete="CASCADE"))
+    institution_id = Column(Integer, ForeignKey("institution.id", ondelete="CASCADE"))
 
     # Relationships
     educator = relationship("Educator", back_populates="lectures")
-    institution = relationship("Institution", back_populates="lectures")
+    institution = relationship("Institution", back_populates="lectures", foreign_keys=[institution_id])
     questions = relationship("Question", back_populates="lecture")
 
 class Question(Base):
@@ -61,7 +61,7 @@ class Question(Base):
     id = Column(Integer, primary_key=True, index=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     changed_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    lecture_id = Column(Integer, ForeignKey("lecture.id"))
+    lecture_id = Column(Integer, ForeignKey("lecture.id", ondelete="CASCADE"))
     question_text = Column(String, nullable=False)
     correct_answer_index = Column(Integer, nullable=False)
     question_created_at = Column(DateTime, default=datetime.utcnow)
@@ -77,7 +77,7 @@ class AnswerOption(Base):
     id = Column(Integer, primary_key=True, index=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     changed_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    question_id = Column(Integer, ForeignKey("question.id"))
+    question_id = Column(Integer, ForeignKey("question.id", ondelete="CASCADE"))
     answer_text = Column(String, nullable=False)
     option_index = Column(Integer, nullable=False)
 
@@ -91,8 +91,8 @@ class StudentAnswer(Base):
     id = Column(Integer, primary_key=True, index=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     changed_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    question_id = Column(Integer, ForeignKey("question.id"))
-    answer_option_id = Column(Integer, ForeignKey("answer_option.id"))
+    question_id = Column(Integer, ForeignKey("question.id", ondelete="CASCADE"))
+    answer_option_id = Column(Integer, ForeignKey("answer_option.id", ondelete="CASCADE"))
     device_id = Column(String(255), nullable=False)
     answer_created_at = Column(DateTime, default=datetime.utcnow)
 
