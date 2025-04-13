@@ -5,8 +5,10 @@ from sqlalchemy.orm import sessionmaker, Session
 import os
 from dotenv import load_dotenv
 from typing import List
-from . import models, schemas, crud
-from .database import SessionLocal, engine
+import models
+import schemas
+import crud
+from database import SessionLocal, engine
 
 # Load environment variables
 load_dotenv()
@@ -17,6 +19,8 @@ SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:postg
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
+
+models.Base.metadata.create_all(bind=engine)
 
 # Dependency to get DB session
 def get_db():

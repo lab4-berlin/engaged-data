@@ -1,6 +1,6 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Table
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Table
 from sqlalchemy.orm import relationship
-from .main import Base
+from database import Base
 from datetime import datetime
 
 class Institution(Base):
@@ -48,7 +48,7 @@ class Lecture(Base):
     lecture_date = Column(DateTime, nullable=False)
     lecture_title = Column(String(255), nullable=False)
     educator_id = Column(Integer, ForeignKey("educator.id"))
-    institution_id = Column(Integer, ForeignKey("institution.id"))
+    institution_id = Column(Integer, nullable=False)
 
     # Relationships
     educator = relationship("Educator", back_populates="lectures")
